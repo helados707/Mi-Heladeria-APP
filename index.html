@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi Heladería App</title>
+  <style>
+    :root {
+      --principal: #4e342e;
+      --fondo: #ffffff;
+      --texto: #222;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--fondo);
+      color: var(--texto);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: var(--fondo);
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .search-bar {
+      width: 60%;
+      text-align: center;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px 35px 10px 35px;
+      border-radius: 20px;
+      border: 1px solid #aaa;
+    }
+    .search-bar span {
+      position: absolute;
+      left: 25px;
+      font-size: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    .menu-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .container {
+      max-width: 700px;
+      margin: 20px auto;
+      background: var(--fondo);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .section h2 {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+      color: var(--principal);
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+    }
+    .controls button {
+      background: var(--principal);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin: 0 5px;
+      border-radius: 5px;
+    }
+    input[type="text"], input[type="number"], input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .hidden {
+      display: none;
+    }
+    button.add-btn {
+      background: var(--principal);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      margin-top: 10px;
+    }
+    .error { color: red; text-align: center; display: none; }
+  </style>
+  <script>
+    function login() {
+      const u = document.getElementById("user").value;
+      const p = document.getElementById("pass").value;
+      if (u === "admin.1955" && p === "helados1955") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("main").style.display = "block";
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    }
+    function adjust(btn, delta) {
+      const span = btn.parentElement.querySelector("span");
+      let value = parseInt(span.textContent);
+      span.textContent = Math.max(0, value + delta);
+    }
+    function agregar(idLista, inputId, stockId) {
+      const nombre = document.getElementById(inputId).value.trim();
+      const cantidad = parseInt(document.getElementById(stockId).value);
+      if (nombre && !isNaN(cantidad)) {
+        const cont = document.getElementById(idLista);
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `<span>${nombre}</span><div class="controls"><button onclick="adjust(this,-1)">-</button><span>${cantidad}</span><button onclick="adjust(this,1)">+</button></div>`;
+        cont.appendChild(div);
+        document.getElementById(inputId).value = "";
+        document.getElementById(stockId).value = "";
+      }
+    }
+    function filtrar() {
+      const val = document.getElementById("busqueda").value.toLowerCase();
+      document.querySelectorAll(".item").forEach(el => {
+        const text = el.querySelector("span").textContent.toLowerCase();
+        el.style.display = text.includes(val) ? "" : "none";
+      });
+    }
+  </script>
+</head>
+<body>
+  <div id="login" class="container">
+    <h1>Mi Heladería App</h1>
+    <input type="text" id="user" placeholder="Usuario" />
+    <input type="password" id="pass" placeholder="Contraseña" />
+    <div id="loginError" class="error">Usuario o contraseña incorrectos</div>
+    <button class="add-btn" onclick="login()">Ingresar</button>
+  </div>
+
+  <div id="main" class="hidden">
+    <div class="header">
+      <div class="search-bar">
+        <input type="text" id="busqueda" onkeyup="filtrar()" placeholder="Buscar sabor o producto..." />
+      </div>
+      <div class="menu-icon">&#9776;</div>
+    </div>
+
+    <div class="container">
+      <div class="section">
+        <h2>Sabores Clásicos</h2>
+        <div id="listaClasicos"></div>
+        <input type="text" id="nuevoClasico" placeholder="Nuevo sabor clásico" />
+        <input type="number" id="stockClasico" placeholder="Stock inicial" />
+        <button class="add-btn" onclick="agregar('listaClasicos','nuevoClasico','stockClasico')">Añadir</button>
+      </div>
+
+      <div class="section">
+        <h2>Sabores Premium</h2>
+        <div id="listaPremium"></div>
+        <input type="text" id="nuevoPremium" placeholder="Nuevo sabor premium" />
+        <input type="number" id="stockPremium" placeholder="Stock inicial" />
+        <button class="add-btn" onclick="agregar('listaPremium','nuevoPremium','stockPremium')">Añadir</button>
+      </div>
+
+      <div class="section">
+        <h2>Otros Productos</h2>
+        <div id="listaOtros"></div>
+        <input type="text" id="nuevoOtro" placeholder="Nuevo producto" />
+        <input type="number" id="stockOtro" placeholder="Stock inicial" />
+        <button class="add-btn" onclick="agregar('listaOtros','nuevoOtro','stockOtro')">Añadir</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
